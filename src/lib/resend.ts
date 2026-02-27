@@ -1,6 +1,17 @@
 import { Resend } from "resend";
 
-export const resend = new Resend(process.env.RESEND_API_KEY);
+function getResendClient() {
+  if (!process.env.RESEND_API_KEY) {
+    throw new Error("RESEND_API_KEY is not set");
+  }
+  return new Resend(process.env.RESEND_API_KEY);
+}
+
+export const resend = new Proxy({} as Resend, {
+  get(_, prop) {
+    return Reflect.get(getResendClient(), prop);
+  },
+});
 
 export async function sendTestimonialRequestEmail({
   to,

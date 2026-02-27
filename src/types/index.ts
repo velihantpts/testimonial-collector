@@ -10,7 +10,7 @@ import type {
   WidgetTheme,
   WidgetLayout,
   ReminderStatus,
-} from "@/generated/prisma";
+} from "@/generated/prisma/client";
 
 export type {
   User,
