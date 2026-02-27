@@ -1,0 +1,204 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ==================== AUTH ====================
+
+model User {
+  id            String    @id @default(cuid())
+  name          String
+  email         String    @unique
+  password      String?
+  image         String?
+  plan          Plan      @default(FREE)
+  stripeCustomerId    String?   @unique
+  stripeSubscriptionId String?
+  companyName   String?
+  companyLogo   String?
+  slug          String    @unique
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  projects      Project[]
+  sessions      Session[]
+  accounts      Account[]
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum Plan {
+  FREE
+  STARTER
+  PRO
+}
+
+// ==================== PROJECTS ====================
+
+model Project {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  testimonials  Testimonial[]
+  widgets       Widget[]
+  collectPage   CollectPage?
+  emailReminders EmailReminder[]
+
+  @@unique([userId, slug])
+}
+
+// ==================== TESTIMONIALS ====================
+
+model Testimonial {
+  id          String   @id @default(cuid())
+  projectId   String
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  name        String
+  email       String?
+  avatar      String?
+  company     String?
+  jobTitle    String?
+  website     String?
+
+  text        String
+  rating      Int
+  videoUrl    String?
+
+  status      TestimonialStatus @default(PENDING)
+  isFavorite  Boolean  @default(false)
+  tags        String[]
+
+  tweetVersion    String?
+  linkedInVersion String?
+  emailQuote      String?
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+enum TestimonialStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+// ==================== WIDGETS ====================
+
+model Widget {
+  id          String   @id @default(cuid())
+  projectId   String
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  name        String   @default("Default Widget")
+  theme       WidgetTheme @default(LIGHT)
+  layout      WidgetLayout @default(CAROUSEL)
+  maxDisplay  Int      @default(5)
+
+  bgColor        String  @default("#ffffff")
+  textColor      String  @default("#111827")
+  starColor      String  @default("#f59e0b")
+  borderRadius   Int     @default(12)
+  showRating     Boolean @default(true)
+  showAvatar     Boolean @default(true)
+  showCompany    Boolean @default(true)
+  showDate       Boolean @default(false)
+  autoplay       Boolean @default(true)
+  autoplaySpeed  Int     @default(5)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+enum WidgetTheme {
+  LIGHT
+  DARK
+  CUSTOM
+}
+
+enum WidgetLayout {
+  CAROUSEL
+  GRID
+  LIST
+  MASONRY
+  WALL_OF_LOVE
+  MINIMAL
+}
+
+// ==================== COLLECT PAGE ====================
+
+model CollectPage {
+  id          String  @id @default(cuid())
+  projectId   String  @unique
+  project     Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  title           String  @default("Share Your Experience")
+  description     String  @default("We'd love to hear about your experience. Your feedback helps us improve and helps others make informed decisions.")
+  thankYouMessage String  @default("Thank you for your testimonial! We truly appreciate your feedback.")
+  brandColor      String  @default("#6366f1")
+  collectVideo    Boolean @default(false)
+  collectAvatar   Boolean @default(true)
+  collectCompany  Boolean @default(true)
+  collectWebsite  Boolean @default(false)
+
+  promptQuestions  String[] @default(["What was the problem you were facing?", "How did our product/service help?", "What results did you achieve?"])
+}
+
+// ==================== EMAIL REMINDERS ====================
+
+model EmailReminder {
+  id          String  @id @default(cuid())
+  projectId   String
+  project     Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  recipientEmail  String
+  recipientName   String?
+  status          ReminderStatus @default(PENDING)
+  sentAt          DateTime?
+  openedAt        DateTime?
+  submittedAt     DateTime?
+
+  createdAt   DateTime @default(now())
+}
+
+enum ReminderStatus {
+  PENDING
+  SENT
+  OPENED
+  SUBMITTED
+  FAILED
+}

@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx tsc --noEmit)",
+      "Bash(ls -la \"C:/Users/velih/OneDrive/Desktop/testimonial-collector/src/lib/auth.ts\" \"C:/Users/velih/OneDrive/Desktop/testimonial-collector/src/app/api/auth/[...nextauth]/route.ts\" \"C:/Users/velih/OneDrive/Desktop/testimonial-collector/src/app/\\(auth\\)/layout.tsx\" \"C:/Users/velih/OneDrive/Desktop/testimonial-collector/src/app/\\(auth\\)/login/page.tsx\" \"C:/Users/velih/OneDrive/Desktop/testimonial-collector/src/app/\\(auth\\)/register/page.tsx\" \"C:/Users/velih/OneDrive/Desktop/testimonial-collector/src/app/api/auth/register/route.ts\" \"C:/Users/velih/OneDrive/Desktop/testimonial-collector/middleware.ts\" \"C:/Users/velih/OneDrive/Desktop/testimonial-collector/src/types/next-auth.d.ts\")"
+    ],
+    "additionalDirectories": [
+      "C:\\Users\\velih\\OneDrive\\Desktop\\testimonial-collector\\src\\app\\api\\projects",
+      "C:\\Users\\velih\\OneDrive\\Desktop\\testimonial-collector\\src\\app\\api\\collect",
+      "C:\\Users\\velih\\OneDrive\\Desktop\\testimonial-collector\\src\\app\\api\\testimonials\\[id]",
+      "C:\\Users\\velih\\OneDrive\\Desktop\\testimonial-collector\\src\\app\\api\\widgets"
+    ]
+  }
+}
